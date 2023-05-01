@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"sort"
 )
 
 func write(links []Link, contentIndex ContentIndex, toIndex bool, out string, root string) error {
@@ -57,7 +58,14 @@ func writeLinkMap(contentIndex *ContentIndex, root string) error {
 	}
 
 	datawriter := bufio.NewWriter(file)
-	for path := range *contentIndex {
+	paths := make([]string, len(*contentIndex))
+	i := 0
+	for k := range *contentIndex {
+		paths[i] = k
+		i++
+	}
+	sort.Strings(paths)
+	for _, path := range paths {
 		if path == "/" {
 			_, _ = datawriter.WriteString("/index.html /\n")
 		} else {
